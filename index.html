@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ethan's website</title>
+  <style>
+    body {
+      background-image: url('https://i.pinimg.com/736x/5b/81/ed/5b81eda4366796ab2536652e07b0019c.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      color: #00ff00;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #ff00ff;
+      text-shadow: 2px 2px #0000ff;
+    }
+    .content {
+      width: 80%;
+      margin: auto;
+      border: 2px dashed #64ff7a;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .blink {
+      animation: blink 1s infinite;
+      color: orange;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    marquee {
+      color: cyan;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1> Ethan's Weird and Wacky Webpage </h1>
+  <marquee scrollamount="7">Welcome to my test website hope you like it! </marquee>
+
+  <div class="content">
+    <h2> About Me </h2>
+    <p>Hey there! My name is <strong>Ethan</strong> and I am a <span class="blink">weird</span> computer nerd!</p>
+    
+    <h2>Favorite Food</h2>
+    <p>Nothing beats a bowl of <strong>Kraft Mac & Cheese</strong>! So cheesy, so gooood.</p>
+    
+    <h2>Interests</h2>
+    <ul>
+      <li>Programming in python</li>
+      <li>making computer viruses</li>
+
+  </div>
+</body>
+</html>
