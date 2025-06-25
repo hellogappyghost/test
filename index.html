@@ -41,31 +41,31 @@
       padding: 15px;
       margin: 10px 0;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
     }
-    .member h3 {
-      margin-top: 0;
+    .member-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 15px;
+      flex-shrink: 0;
+      background-color: #ccc;
+    }
+    .member-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .member-content h3 {
+      margin: 0;
     }
     footer {
       background: #333;
       color: white;
       text-align: center;
       padding: 15px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    form button {
-      background: #4682B4;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 10px;
-      cursor: pointer;
-      border-radius: 6px;
     }
   </style>
 </head>
@@ -84,30 +84,57 @@
       <h2>Meet the Family</h2>
 
       <div class="member">
-        <h3>Ben Sloss</h3>
-        <p>A Pastor at Oursaviors Lutheran church he loves experimenting with new tech!</p>
+        <div class="member-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Ben">
+        </div>
+        <div class="member-content">
+          <h3>Ben Sloss</h3>
+          <p>A Pastor at Oursaviors Lutheran church he loves experimenting with new tech!</p>
+        </div>
       </div>
 
       <div class="member">
-        <h3>Tracie Ortman</h3>
-        <p> The Executive Director of Bright Stars of Bethlehem loves Cooking shows.</p>
+        <div class="member-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Tracie">
+        </div>
+        <div class="member-content">
+          <h3>Tracie Ortman</h3>
+          <p>The Executive Director of Bright Stars of Bethlehem loves Cooking shows.</p>
+        </div>
       </div>
 
       <div class="member">
-        <h3>Ethan Sloss</h3>
-        <p>The Creator of this Website also loves to try and experiment with what you can do on a computer.</p>
-      </div>
-      
-      <div class="member">
-        <h3>Grace Sloss</h3>
-        <p>.</p>
+        <div class="member-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Ethan">
+        </div>
+        <div class="member-content">
+          <h3>Ethan Sloss</h3>
+          <p>The Creator of this Website also loves to try and experiment with what you can do on a computer.</p>
+        </div>
       </div>
 
       <div class="member">
-        <h3>Lily Sloss</h3>
-        <p>.</p>
+        <div class="member-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Grace">
+        </div>
+        <div class="member-content">
+          <h3>Grace Sloss</h3>
+          <p>.</p>
+        </div>
       </div>
-      
+
+      <div class="member">
+        <div class="member-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Lily">
+        </div>
+        <div class="member-content">
+          <h3>Lily Sloss</h3>
+          <p>.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
   <footer>
     <p>&copy; 2025 The Sloss Family</p>
   </footer>
