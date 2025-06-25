@@ -1,60 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Ethan's website</title>
-  <!-- Google Font: Comic Neue -->
-  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Sloss Family</title>
   <style>
     body {
-      background-image: url('https://i.pinimg.com/736x/5b/81/ed/5b81eda4366796ab2536652e07b0019c.jpg');
-      background-size: cover;
-      background-attachment: fixed;
-      color: #00ff00;
-      font-family: 'Comic Neue', sans-serif;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
-    h1, h2 {
-      text-align: center;
-      color: #ff00ff;
-      text-shadow: 2px 2px #0000ff;
-    }
-    .content {
-      width: 80%;
-      margin: auto;
-      border: 2px dashed #64ff7a;
+    header {
+      background: #4682B4;
+      color: white;
       padding: 20px;
-      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
     }
-    .blink {
-      animation: blink 1s infinite;
-      color: orange;
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
     }
-    @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0; }
-      100% { opacity: 1; }
+    .family-photo {
+      text-align: center;
+      margin: 20px 0;
     }
-    marquee {
-      color: cyan;
-      font-size: 18px;
+    .family-photo img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .section {
+      margin: 30px 0;
+    }
+    .member {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .member h3 {
+      margin-top: 0;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    form button {
+      background: #4682B4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <h1> Ethan's Weird and Wacky Webpage </h1>
-  <marquee scrollamount="7">Welcome to my test website hope you like it!</marquee>
+  <header>
+    <h1>Welcome to the Sloss Family Homepage</h1>
+    <p>Our place on the web</p>
+  </header>
 
-  <div class="content">
-    <h2> About Me </h2>
-    <p>Hey there! My name is <strong>Ethan</strong> and I am a <span class="blink">weird</span> computer nerd!</p>
-    
-    <h2>Favorite Food</h2>
-    <p>Nothing beats a bowl of <strong>Kraft Mac & Cheese</strong>! So cheesy, so gooood.</p>
-    
-    <h2>Interests</h2>
-    <ul>
-      <li>Programming in python</li>
-      <li>making computer viruses</li>
-    </ul>
-  </div>
+  <main>
+    <div class="family-photo">
+      <img src="https://via.placeholder.com/800x400?text=Our+Family+Photo" alt="Family Photo">
+    </div>
+
+    <div class="section">
+      <h2>Meet the Family</h2>
+
+      <div class="member">
+        <h3>Family Member 1</h3>
+        <p>Description goes here.</p>
+      </div>
+
+      <div class="member">
+        <h3>Family Member 2</h3>
+        <p>Description goes here.</p>
+      </div>
+
+      <div class="member">
+        <h3>Family Member 3</h3>
+        <p>Description goes here.</p>
+      </div>
+      
+      <!-- Add more members as needed -->
+    </div>
+
+    <div class="section">
+      <h2>Family News</h2>
+      <p>- Add your latest updates or events here.</p>
+    </div>
+
+    <div class="section">
+      <h2>Contact Us</h2>
+      <form onsubmit="alert('Message sent!'); return false;">
+        <label>Your Name:</label>
+        <input type="text" required>
+        <label>Your Message:</label>
+        <textarea rows="5" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 The Sloss Family</p>
+  </footer>
 </body>
 </html>
