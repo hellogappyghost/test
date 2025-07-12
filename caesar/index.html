@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Caesar Cipher Decoder</title>
+<style>
+  body { font-family: Arial,sans-serif; margin: 2rem; background: #f9f9f9; }
+  textarea { width:100%; height:120px; font-size:1rem; padding:0.5rem; }
+  button { margin-top:1rem; padding:0.5rem 1rem; font-size:1rem; cursor:pointer; }
+  .result { margin-top:1rem; padding:1rem; background:#fff; border-radius:5px;
+    box-shadow:0 0 5px #ccc; transition:box-shadow .3s ease; }
+  .highlight { background:#fff9c4; box-shadow:0 0 15px #ffeb3b; }
+  pre { white-space:pre-wrap; word-wrap:break-word; font-family:monospace; }
+  .score { font-size:0.9rem; color:#666; margin-top:0.5rem; }
+  .loading { font-style:italic; margin-top:1rem; }
+</style>
+</head>
+<body>
+<h1>Caesar Cipher Decoder</h1>
+<textarea id="ciphertext" placeholder="Paste ciphertext here…"></textarea><br>
+<button id="decodeBtn" disabled>Loading word list…</button>
+<div id="loading" class="loading"></div>
+<div id="results"></div>
+
+<script>
+// 📦 Local word list (Set) + frequency map for common words
+let dictionary, freqMap;
+
+async function loadDictionaries() {
+  const [wordsTxt, freqTxt] = await Promise.all([
+    fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt').then(r=>r.text()),
+    fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt').then(r=>r.text())
+  ]);
+  
+  dictionary = new Set(wordsTxt.split('\n').map(w => w.trim()).filter(Boolean));
+  
+  freqMap = new Map();
+  freqTxt.split('\n').forEach((w,i) => {
+    freqMap.set(w.trim(), 10000 - i); // top word gets score ~10000
+  });
+}
+
+function caesarShift(text, shift) {
+  const A=65, a=97;
+  return [...text].map(ch=>{
+    const c=ch.charCodeAt(0);
+    if(c>=A&&c<=90) return String.fromCharCode((c - A - shift +26)%26 + A);
+    if(c>=a&&c<=122) return String.fromCharCode((c - a - shift +26)%26 + a);
+    return ch;
+  }).join('');
+}
+
+function scoreText(text) {
+  const words = text.toLowerCase().split(/\W+/).filter(w=>w);
+  let score=0, valid=0;
+  for(const w of words) {
+    if(dictionary.has(w)) {
+      valid++;
+      score++;
+      if(freqMap.has(w)) score += freqMap.get(w)/1000; // bonus scaled down
+    }
+  }
+  return { valid, total: words.length, score };
+}
+
+document.getElementById('decodeBtn').addEventListener('click', () => {
+  const input = document.getElementById('ciphertext').value.trim();
+  const out = document.getElementById('results');
+  out.innerHTML=''; if(!input){ out.innerHTML='<p>Paste ciphertext above.</p>'; return; }
+  
+  let bestScore=-Infinity, bestShift=0, results=[];
+  for(let s=1; s<=26; s++){
+    const dec = caesarShift(input,s), sc=scoreText(dec);
+    const comp = sc.score;
+    results.push({ shift: s, dec, ...sc, score: comp });
+    if(comp>bestScore){bestScore=comp; bestShift=s;}
+  }
+  
+  results.sort((a,b)=>b.score - a.score);
+  for(const r of results){
+    const div = document.createElement('div');
+    div.className='result' + (r.shift===bestShift? ' highlight':'');
+    div.innerHTML = `<strong>Shift ${r.shift}</strong><span class="score"> — score: ${r.score.toFixed(2)}, words: ${r.valid}/${r.total}</span><pre>${r.dec}</pre>`;
+    out.appendChild(div);
+  }
+});
+
+(async()=>{
+  document.getElementById('loading').textContent='Loading dictionaries…';
+  await loadDictionaries();
+  document.getElementById('loading').textContent='';
+  const btn = document.getElementById('decodeBtn');
+  btn.disabled = false;
+  btn.textContent = 'Decode All Shifts';
+})();
+</script>
+</body>
+</html>
