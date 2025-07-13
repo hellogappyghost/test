@@ -1,98 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Caesar Cipher Decoder</title>
-<style>
-  body { font-family: Arial,sans-serif; margin: 2rem; background: #f9f9f9; }
-  textarea { width:100%; height:120px; font-size:1rem; padding:0.5rem; }
-  button { margin-top:1rem; padding:0.5rem 1rem; font-size:1rem; cursor:pointer; }
-  .result { margin-top:1rem; padding:1rem; background:#fff; border-radius:5px;
-    box-shadow:0 0 5px #ccc; transition:box-shadow .3s ease; }
-  .highlight { background:#fff9c4; box-shadow:0 0 15px #ffeb3b; }
-  pre { white-space:pre-wrap; word-wrap:break-word; font-family:monospace; }
-  .score { font-size:0.9rem; color:#666; margin-top:0.5rem; }
-  .loading { font-style:italic; margin-top:1rem; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ultimate Cipher Detector & Decoder with Vigenère Brute Force (1–4 keys)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
+    textarea { width: 100%; height: 120px; font-size: 1rem; padding: 0.5rem; }
+    button, input[type=checkbox] { margin-top: 1rem; font-size: 1rem; }
+    .result { margin-top: 1rem; padding: 1rem; background: #fff; border-radius: 5px;
+      box-shadow: 0 0 5px #ccc; transition: box-shadow .3s ease; }
+    .highlight { background: #fff9c4; box-shadow: 0 0 15px #ffeb3b; }
+    pre { white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
+    .score { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }
+    .loading { font-style: italic; margin-top: 1rem; color: red; }
+  </style>
 </head>
 <body>
-<h1>Caesar Cipher Decoder</h1>
+<h1>Ultimate Cipher Detector & Decoder</h1>
 <textarea id="ciphertext" placeholder="Paste ciphertext here…"></textarea><br>
-<button id="decodeBtn" disabled>Loading word list…</button>
+<button id="detectBtn" disabled>🔍 Detect & Decode</button>
 <div id="loading" class="loading"></div>
 <div id="results"></div>
 
 <script>
-// 📦 Local word list (Set) + frequency map for common words
 let dictionary, freqMap;
 
 async function loadDictionaries() {
   const [wordsTxt, freqTxt] = await Promise.all([
-    fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt').then(r=>r.text()),
-    fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt').then(r=>r.text())
+    fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt').then(r => r.text()),
+    fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt').then(r => r.text())
   ]);
-  
   dictionary = new Set(wordsTxt.split('\n').map(w => w.trim()).filter(Boolean));
-  
   freqMap = new Map();
-  freqTxt.split('\n').forEach((w,i) => {
-    freqMap.set(w.trim(), 10000 - i); // top word gets score ~10000
+  freqTxt.split('\n').forEach((w, i) => {
+    freqMap.set(w.trim(), 10000 - i);
   });
 }
 
-function caesarShift(text, shift) {
-  const A=65, a=97;
-  return [...text].map(ch=>{
-    const c=ch.charCodeAt(0);
-    if(c>=A&&c<=90) return String.fromCharCode((c - A - shift +26)%26 + A);
-    if(c>=a&&c<=122) return String.fromCharCode((c - a - shift +26)%26 + a);
-    return ch;
-  }).join('');
-}
-
 function scoreText(text) {
-  const words = text.toLowerCase().split(/\W+/).filter(w=>w);
-  let score=0, valid=0;
-  for(const w of words) {
-    if(dictionary.has(w)) {
+  const words = text.toLowerCase().split(/\W+/).filter(w => w);
+  let score = 0, valid = 0;
+  for (const w of words) {
+    if (dictionary.has(w)) {
       valid++;
       score++;
-      if(freqMap.has(w)) score += freqMap.get(w)/1000; // bonus scaled down
+      if (freqMap.has(w)) score += freqMap.get(w) / 1000;
     }
   }
   return { valid, total: words.length, score };
 }
 
-document.getElementById('decodeBtn').addEventListener('click', () => {
+function caesarShift(text, shift) {
+  const A = 65, a = 97;
+  return [...text].map(ch => {
+    const c = ch.charCodeAt(0);
+    if (c >= A && c <= 90) return String.fromCharCode((c - A - shift + 26) % 26 + A);
+    if (c >= a && c <= 122) return String.fromCharCode((c - a - shift + 26) % 26 + a);
+    return ch;
+  }).join('');
+}
+
+function rot13(text) {
+  return caesarShift(text, 13);
+}
+
+function atbash(text) {
+  const A = 65, a = 97;
+  return [...text].map(ch => {
+    const c = ch.charCodeAt(0);
+    if (c >= A && c <= 90) return String.fromCharCode(A + (25 - (c - A)));
+    if (c >= a && c <= 122) return String.fromCharCode(a + (25 - (c - a)));
+    return ch;
+  }).join('');
+}
+
+function vigenereAlt(text, key) {
+  const cleanKey = key.toLowerCase().replace(/[^a-z]/g, '');
+  if (!cleanKey) return text;
+
+  let output = '';
+  let j = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const code = text.charCodeAt(i);
+
+    if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) {
+      const shift = cleanKey.charCodeAt(j % cleanKey.length) - 97;
+
+      if (code >= 65 && code <= 90) {
+        output += String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
+      } else {
+        output += String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
+      }
+
+      j++;
+    } else {
+      output += c;
+    }
+  }
+
+  return output;
+}
+
+function* generateKeys(maxLen) {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  function* helper(prefix, length) {
+    if (length === 0) {
+      yield prefix;
+    } else {
+      for (const l of letters) {
+        yield* helper(prefix + l, length - 1);
+      }
+    }
+  }
+  for (let len = 1; len <= maxLen; len++) {
+    yield* helper('', len);
+  }
+}
+
+async function bruteForceVigenere(input, maxLen = 4) {
+  const results = [];
+  const gen = generateKeys(maxLen);
+  const chunkSize = 5000; // smaller chunk to keep UI responsive
+  let done = false;
+  let count = 0;
+
+  while (!done) {
+    const chunk = [];
+    for (let i = 0; i < chunkSize; i++) {
+      const next = gen.next();
+      if (next.done) {
+        done = true;
+        break;
+      }
+      chunk.push(next.value);
+    }
+
+    for (const key of chunk) {
+      const dec = vigenereAlt(input, key);
+      const score = scoreText(dec);
+      results.push({ method: `Vigenère brute force (key: ${key})`, dec, score });
+    }
+
+    // Sort & keep best top 15 to avoid UI overload
+    results.sort((a, b) => b.score.score - a.score.score);
+    const best = results[0];
+    renderPartialResults(results, best);
+
+    count += chunk.length;
+    document.getElementById('loading').textContent = `Bruteforcing Vigenère keys length 1–${maxLen}... Tried ${count.toLocaleString()} keys (WARNING: very slow for large maxLen!)`;
+
+    await new Promise(r => setTimeout(r, 10));
+  }
+
+  return results;
+}
+
+// MORSE CODE ADDITIONS BELOW
+
+const morseCodeMap = {
+  ".-": "A", "-...": "B", "-.-.": "C", "-..": "D",
+  ".": "E", "..-.": "F", "--.": "G", "....": "H",
+  "..": "I", ".---": "J", "-.-": "K", ".-..": "L",
+  "--": "M", "-.": "N", "---": "O", ".--.": "P",
+  "--.-": "Q", ".-.": "R", "...": "S", "-": "T",
+  "..-": "U", "...-": "V", ".--": "W", "-..-": "X",
+  "-.--": "Y", "--..": "Z",
+  "-----": "0", ".----": "1", "..---": "2", "...--": "3",
+  "....-": "4", ".....": "5", "-....": "6", "--...": "7",
+  "---..": "8", "----.": "9",
+  ".-.-.-": ".", "--..--": ",", "..--..": "?", "-..-.": "/",
+  "-....-": "-", "-.--.": "(", "-.--.-": ")", "/": " "
+};
+
+function decodeMorse(morse) {
+  // split by space or slash (slash denotes word break)
+  // We treat '/' as word separator, space as letter separator.
+  const words = morse.trim().split(' / ');
+  let decoded = words.map(word => {
+    return word.split(' ').map(symbol => morseCodeMap[symbol] || '').join('');
+  }).join(' ');
+  return decoded;
+}
+
+function isLikelyMorse(text) {
+  // check if text only contains characters common in Morse: . - / space
+  return /^[.\- \/]+$/.test(text.trim());
+}
+
+function renderResult(title, decoded, score, type, highlight = false) {
+  const out = document.getElementById('results');
+  const div = document.createElement('div');
+  div.className = 'result' + (highlight ? ' highlight' : '');
+  div.innerHTML = `<strong>${title} (${type})</strong>
+    <span class="score"> — score: ${score.score.toFixed(2)}, words: ${score.valid}/${score.total}</span>
+    <pre>${decoded}</pre>`;
+  out.appendChild(div);
+}
+
+function renderPartialResults(results, best) {
+  const out = document.getElementById('results');
+  out.innerHTML = '';
+  for (const r of results.slice(0, 15)) {
+    renderResult(r.method, r.dec, r.score, r.method, r === best);
+  }
+}
+
+document.getElementById('detectBtn').addEventListener('click', async () => {
   const input = document.getElementById('ciphertext').value.trim();
   const out = document.getElementById('results');
-  out.innerHTML=''; if(!input){ out.innerHTML='<p>Paste ciphertext above.</p>'; return; }
-  
-  let bestScore=-Infinity, bestShift=0, results=[];
-  for(let s=1; s<=26; s++){
-    const dec = caesarShift(input,s), sc=scoreText(dec);
-    const comp = sc.score;
-    results.push({ shift: s, dec, ...sc, score: comp });
-    if(comp>bestScore){bestScore=comp; bestShift=s;}
+  out.innerHTML = '';
+  if (!input) { out.innerHTML = '<p>Paste ciphertext above.</p>'; return; }
+
+  let results = [];
+
+  // Caesar all shifts
+  for (let s = 0; s < 26; s++) {
+    const dec = caesarShift(input, s);
+    const score = scoreText(dec);
+    results.push({ method: 'Caesar', shift: s, dec, score });
   }
-  
-  results.sort((a,b)=>b.score - a.score);
-  for(const r of results){
-    const div = document.createElement('div');
-    div.className='result' + (r.shift===bestShift? ' highlight':'');
-    div.innerHTML = `<strong>Shift ${r.shift}</strong><span class="score"> — score: ${r.score.toFixed(2)}, words: ${r.valid}/${r.total}</span><pre>${r.dec}</pre>`;
-    out.appendChild(div);
+
+  // ROT13
+  const rot = rot13(input);
+  results.push({ method: 'ROT13', dec: rot, score: scoreText(rot) });
+
+  // Atbash
+  const atb = atbash(input);
+  results.push({ method: 'Atbash', dec: atb, score: scoreText(atb) });
+
+  // Plaintext (original)
+  results.push({ method: 'Plaintext', dec: input, score: scoreText(input) });
+
+  // Vigenère with some common keys
+  const commonKeys = ['key', 'secret', 'cipher', 'password', 'crypto', 'hidden'];
+  for (const k of commonKeys) {
+    const dec = vigenereAlt(input, k);
+    results.push({ method: `Vigenère (key: ${k})`, dec, score: scoreText(dec) });
   }
+
+  // MORSE DETECTION & DECODING
+  if (isLikelyMorse(input)) {
+    const morseDec = decodeMorse(input);
+    const score = scoreText(morseDec);
+    results.push({ method: 'Morse Code', dec: morseDec, score });
+  }
+
+  // Sort & highlight best from above
+  results.sort((a, b) => b.score.score - a.score.score);
+  const best = results[0];
+  renderPartialResults(results, best);
+
+  // Start brute forcing Vigenère keys length 1-4
+  document.getElementById('loading').style.color = 'red';
+  document.getElementById('loading').textContent = 'Bruteforcing Vigenère keys length 1–4 (WARNING: VERY SLOW!)';
+
+  const bfResults = await bruteForceVigenere(input, 4);
+  results = results.concat(bfResults);
+
+  // Final sort & show top 20
+  results.sort((a, b) => b.score.score - a.score.score);
+  const finalBest = results[0];
+
+  const outFinal = document.getElementById('results');
+  outFinal.innerHTML = '';
+  for (const r of results.slice(0, 20)) {
+    renderResult(r.method, r.dec, r.score, r.method, r === finalBest);
+  }
+
+  document.getElementById('loading').textContent = '';
+  document.getElementById('loading').style.color = 'inherit';
 });
 
-(async()=>{
-  document.getElementById('loading').textContent='Loading dictionaries…';
+(async () => {
+  document.getElementById('loading').textContent = 'Loading dictionaries…';
   await loadDictionaries();
-  document.getElementById('loading').textContent='';
-  const btn = document.getElementById('decodeBtn');
-  btn.disabled = false;
-  btn.textContent = 'Decode All Shifts';
+  document.getElementById('loading').textContent = '';
+  document.getElementById('detectBtn').disabled = false;
 })();
 </script>
 </body>
