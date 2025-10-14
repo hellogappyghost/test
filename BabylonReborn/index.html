@@ -25,7 +25,8 @@
       background: var(--green);
       color: var(--teal);
       text-align: center;
-      padding: 4rem 1rem;
+      padding: 5rem 1rem;
+      animation: fadeInDown 1.2s ease forwards;
     }
 
     header h1 {
@@ -42,7 +43,15 @@
     }
 
     section {
-      padding: 4rem 10%;
+      padding: 5rem 10%;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     section h2 {
@@ -62,17 +71,9 @@
       color: var(--gray);
     }
 
-    .about {
-      background: #003845;
-    }
-
-    .attractions {
-      background: #004d4d;
-    }
-
-    .merch {
-      background: #005a4e;
-    }
+    .about { background: #003845; }
+    .attractions { background: #004d4d; }
+    .merch { background: #005a4e; }
 
     footer {
       background: var(--green);
@@ -82,11 +83,22 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
+      animation: fadeInUp 1.2s ease forwards;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
       header h1 { font-size: 2.2rem; }
-      section { padding: 3rem 8%; }
+      section { padding: 3.5rem 8%; }
       section h2 { font-size: 1.6rem; }
     }
   </style>
@@ -124,6 +136,19 @@
   <footer>
     Babylon Reborn © 2025
   </footer>
+
+  <script>
+    const sections = document.querySelectorAll("section");
+    const revealOnScroll = () => {
+      const trigger = window.innerHeight * 0.85;
+      sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        if (top < trigger) sec.classList.add("visible");
+      });
+    };
+    window.addEventListener("scroll", revealOnScroll);
+    window.addEventListener("load", revealOnScroll);
+  </script>
 
 </body>
 </html>
