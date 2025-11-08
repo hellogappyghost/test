@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continue</title>
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      background: red;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #cc0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to YouTube Clone</h1>
+  <p>Press continue to proceed</p>
+  <button id="continueBtn">Continue</button>
+
+  <script>
+    document.getElementById("continueBtn").addEventListener("click", () => {
+      localStorage.setItem("canContinue", "true");
+      window.location.href = "youtube.html";
+    });
+  </script>
+</body>
+</html>
